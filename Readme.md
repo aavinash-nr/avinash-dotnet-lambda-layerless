@@ -43,5 +43,7 @@ If already installed check if new version is available.
 Deploy function to AWS Lambda
 ```
     cd "avinash-dotnet-lambda-layerless"
+    // Use the below command if path issue comes.
+    export PATH="$PATH:$HOME/.dotnet/tools"        
     dotnet lambda deploy-function
 ```

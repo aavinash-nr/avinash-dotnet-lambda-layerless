@@ -113,7 +113,7 @@
 
 using Amazon.Lambda.Core;
 using Newtonsoft.Json;
-using NewRelic.Api.Agent;
+using NewRelic.Agent;
 using System;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -122,7 +122,7 @@ namespace avinash_dotnet_lambda_layerless
 {
     public class Function
     {
-        private static readonly IAgent agent = NewRelic.Api.Agent.NewRelic.GetAgent();
+        private static readonly IAgent agent = NewRelic.Agent.NewRelic.GetAgent();
 
         /// <summary>
         /// Lambda function that simulates a DivideByZeroException.
@@ -143,7 +143,14 @@ namespace avinash_dotnet_lambda_layerless
             }
             catch (DivideByZeroException ex)
             {
-                NewRelic.Api.Agent.NewRelic.NoticeError(ex);
+                var errorAttributes = new Dictionary<string, string>{{"foo", "bar"},{"baz", "luhr"}};
+
+                // Record the error message in string format
+                string errorMessage = $"Custom DivideByZeroException: {ex.Message}";
+                NewRelic.Api.Agent.NewRelic.NoticeError(errorMessage, errorAttributes);
+                
+                // Record the error message in exception format
+                // NewRelic.Api.Agent.NewRelic.NoticeError(ex);
 
                 context.Logger.LogLine($"Exception: {ex.Message}");
                 Console.WriteLine("NoticeError recorded for DivideByZeroException");
